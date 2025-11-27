@@ -1,0 +1,480 @@
+.image-modal-overlay {
+/* Posicionamiento */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+
+  /* Modelo de caja */
+  display: flex;
+
+  /* Flexbox y Grid */
+  align-items: center;
+  justify-content: center;
+
+  /* Relleno */
+  padding: 20px;
+
+  /* Fondos */
+  background: rgba(0, 0, 0, 0.8);
+
+  /* Otras propiedades */
+  backdrop-filter: blur(10px);}
+
+.image-modal-content {
+/* Modelo de caja */
+  display: flex;
+  overflow: hidden;
+
+  /* Flexbox y Grid */
+  flex-direction: column;
+
+  /* Dimensiones */
+  width: 95vw;
+  height: 90vh;
+
+  /* Bordes */
+  border-radius: 24px;
+  border: 2px solid rgba(34, 211, 238, 0.3);
+
+  /* Fondos */
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+
+  /* Colores y efectos */
+  box-shadow: 0 0 60px rgba(34, 211, 238, 0.3);}
+
+.image-modal-header {
+/* Modelo de caja */
+  display: flex;
+
+  /* Flexbox y Grid */
+  justify-content: space-between;
+  align-items: center;
+
+  /* Relleno */
+  padding: 24px 32px;
+
+  /* Bordes */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+  /* Fondos */
+  background: rgba(15, 23, 42, 0.8);}
+
+.image-modal-header h2 {
+/* Márgenes */
+  margin: 0;
+
+  /* Tipografía */
+  font-size: 1.5rem;
+  font-weight: bold;
+
+  /* Colores y efectos */
+  color: white;}
+
+.close-button {
+/* Modelo de caja */
+  display: flex;
+
+  /* Flexbox y Grid */
+  align-items: center;
+  justify-content: center;
+
+  /* Dimensiones */
+  width: 40px;
+  height: 40px;
+
+  /* Bordes */
+  border: 2px solid rgba(239, 68, 68, 0.5);
+  border-radius: 50%;
+
+  /* Fondos */
+  background: rgba(239, 68, 68, 0.2);
+
+  /* Tipografía */
+  font-size: 1.5rem;
+
+  /* Colores y efectos */
+  color: white;
+
+  /* Transiciones y animaciones */
+  transition: all 0.2s;
+
+  /* Interactividad */
+  cursor: pointer;}
+
+.close-button:hover {
+/* Bordes */
+  border-color: rgba(239, 68, 68, 0.7);
+
+  /* Fondos */
+  background: rgba(239, 68, 68, 0.3);}
+
+.image-comparison-container {
+/* Modelo de caja */
+  display: grid;
+  overflow: hidden;
+
+  /* Flexbox y Grid */
+  gap: 32px;
+  flex: 1;
+
+  /* Dimensiones */
+  height: calc(100% - 140px);
+
+  /* Relleno */
+  padding: 32px;
+
+  /* Otras propiedades */
+  grid-template-columns: 1fr 1fr;}
+
+.image-side {
+/* Modelo de caja */
+  display: flex;
+  overflow: hidden;
+
+  /* Flexbox y Grid */
+  flex-direction: column;
+
+  /* Dimensiones */
+  height: 100%;
+
+  /* Bordes */
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  /* Fondos */
+  background: rgba(30, 41, 59, 0.5);}
+
+.image-side h3 {
+/* Flexbox y Grid */
+  flex-shrink: 0;
+
+  /* Márgenes */
+  margin: 0;
+
+  /* Relleno */
+  padding: 20px;
+
+  /* Bordes */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+  /* Fondos */
+  background: rgba(15, 23, 42, 0.6);
+
+  /* Tipografía */
+  font-size: 1.1rem;
+  font-weight: 600;
+
+  /* Colores y efectos */
+  color: white;}
+
+.image-zoom-container {
+/* Posicionamiento */
+  position: relative;
+
+  /* Modelo de caja */
+  overflow: hidden;
+  display: flex;
+
+  /* Flexbox y Grid */
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+
+  /* Dimensiones */
+  min-height: 0;
+
+  /* Fondos */
+  background: #0f172a;
+
+  /* Interactividad */
+  cursor: crosshair;}
+
+.zoomable-image {
+/* Modelo de caja */
+  display: flex;
+
+  /* Flexbox y Grid */
+  align-items: center;
+  justify-content: center;
+
+  /* Dimensiones */
+  width: 100%;
+  height: 100%;
+
+  /* Transiciones y animaciones */
+  transition: transform 0.1s ease-out;
+
+  /* Otras propiedades */
+  will-change: transform;}
+
+.zoomable-image img {
+/* Modelo de caja */
+  display: block;
+
+  /* Dimensiones */
+  max-width: 100%;
+  max-height: 100%;
+
+  /* Otras propiedades */
+  object-fit: contain;}
+
+.image-info {
+/* Flexbox y Grid */
+  flex-shrink: 0;
+
+  /* Relleno */
+  padding: 16px 20px;
+
+  /* Bordes */
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+  /* Fondos */
+  background: rgba(15, 23, 42, 0.6);}
+
+.image-info p {
+/* Márgenes */
+  margin: 4px 0;
+
+  /* Tipografía */
+  font-size: 0.9rem;
+
+  /* Colores y efectos */
+  color: #e2e8f0;}
+
+.image-info strong {
+/* Colores y efectos */
+  color: #7dd3fc;}
+
+.modal-controls-container {
+/* Posicionamiento */
+  position: relative;
+
+  /* Modelo de caja */
+  display: flex;
+
+  /* Flexbox y Grid */
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+
+  /* Relleno */
+  padding: 20px 32px;
+
+  /* Bordes */
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+  /* Fondos */
+  background: rgba(15, 23, 42, 0.8);}
+
+.zoom-controls {
+/* Posicionamiento */
+  position: absolute;
+  left: 50%;
+
+  /* Modelo de caja */
+  display: flex;
+
+  /* Flexbox y Grid */
+  align-items: center;
+  gap: 12px;
+
+  /* Otras propiedades */
+  transform: translateX(-50%);}
+
+.zoom-button {
+/* Dimensiones */
+  width: 50px;
+  height: 50px;
+
+  /* Bordes */
+  border: 1px solid rgba(34, 211, 238, 0.5);
+  border-radius: 8px;
+
+  /* Fondos */
+  background: rgba(34, 211, 238, 0.2);
+
+  /* Tipografía */
+  font-size: 1.5rem;
+  font-weight: bold;
+
+  /* Colores y efectos */
+  color: white;
+
+  /* Transiciones y animaciones */
+  transition: all 0.2s;
+
+  /* Interactividad */
+  cursor: pointer;}
+
+.zoom-button:hover {
+/* Bordes */
+  border-color: rgba(34, 211, 238, 0.7);
+
+  /* Fondos */
+  background: rgba(34, 211, 238, 0.3);
+
+  /* Otras propiedades */
+  transform: scale(1.1);}
+
+.zoom-level {
+/* Dimensiones */
+  min-width: 80px;
+
+  /* Tipografía */
+  font-weight: bold;
+  font-size: 1.2rem;
+  text-align: center;
+
+  /* Colores y efectos */
+  color: white;}
+
+.right-controls {
+/* Modelo de caja */
+  display: flex;
+
+  /* Flexbox y Grid */
+  align-items: center;
+  gap: 20px;
+
+  /* Márgenes */
+  margin-left: auto;}
+
+.navigation-controls {
+/* Modelo de caja */
+  display: flex;
+
+  /* Flexbox y Grid */
+  align-items: center;
+  gap: 12px;}
+
+.nav-control-button {
+/* Dimensiones */
+  min-width: 90px;
+
+  /* Relleno */
+  padding: 10px 16px;
+
+  /* Bordes */
+  border: 1px solid rgba(34, 211, 238, 0.5);
+  border-radius: 8px;
+
+  /* Fondos */
+  background: rgba(34, 211, 238, 0.2);
+
+  /* Tipografía */
+  font-size: 0.9rem;
+  font-weight: 600;
+
+  /* Colores y efectos */
+  color: white;
+
+  /* Transiciones y animaciones */
+  transition: all 0.2s;
+
+  /* Interactividad */
+  cursor: pointer;}
+
+.nav-control-button:hover:not(:disabled) {
+/* Bordes */
+  border-color: rgba(34, 211, 238, 0.7);
+
+  /* Fondos */
+  background: rgba(34, 211, 238, 0.3);
+
+  /* Otras propiedades */
+  transform: scale(1.05);}
+
+.nav-control-button:disabled {
+/* Colores y efectos */
+  opacity: 0.3;
+
+  /* Interactividad */
+  cursor: not-allowed;}
+
+.nav-counter {
+/* Dimensiones */
+  min-width: 60px;
+
+  /* Tipografía */
+  font-weight: bold;
+  font-size: 1rem;
+  text-align: center;
+
+  /* Colores y efectos */
+  color: white;}
+
+.reset-button {
+/* Dimensiones */
+  min-width: 100px;
+
+  /* Relleno */
+  padding: 10px 20px;
+
+  /* Bordes */
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  border-radius: 8px;
+
+  /* Fondos */
+  background: rgba(239, 68, 68, 0.2);
+
+  /* Tipografía */
+  font-size: 0.9rem;
+  font-weight: 600;
+
+  /* Colores y efectos */
+  color: white;
+
+  /* Transiciones y animaciones */
+  transition: all 0.2s;
+
+  /* Interactividad */
+  cursor: pointer;}
+
+.reset-button:hover {
+/* Bordes */
+  border-color: rgba(239, 68, 68, 0.7);
+
+  /* Fondos */
+  background: rgba(239, 68, 68, 0.3);
+
+  /* Otras propiedades */
+  transform: scale(1.05);}
+
+.info-grid {
+/* Modelo de caja */
+  display: grid;
+
+  /* Flexbox y Grid */
+  gap: 8px;
+
+  /* Otras propiedades */
+  grid-template-columns: 1fr 1fr;}
+
+.info-item {
+/* Modelo de caja */
+  display: flex;
+
+  /* Flexbox y Grid */
+  flex-direction: column;
+  gap: 2px;}
+
+.info-item strong {
+/* Tipografía */
+  font-size: 0.8rem;
+
+  /* Colores y efectos */
+  color: #7dd3fc;}
+
+.info-item span {
+/* Tipografía */
+  font-size: 0.9rem;
+
+  /* Colores y efectos */
+  color: #e2e8f0;
+
+  /* Otras propiedades */
+  word-break: break-all;}
