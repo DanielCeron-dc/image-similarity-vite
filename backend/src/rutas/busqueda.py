@@ -19,26 +19,24 @@ def configurar_rutas_busqueda(app):
         
             datos = request.get_json()
             
-            if 'vector_caracteristicas' in datos:
-                # Busqueda por vector existente
-                vector_consulta = datos['vector_caracteristicas']
-                resultados = sistema_busqueda.buscar_por_vector(vector_consulta)
+            if 'imagen' not in datos:
+                return jsonify({"error": "Se requiere 'imagen' en formato base64"}), 400
+            
+            # Busqueda por imagen nueva
+            imagen_codificada = datos['imagen']
+            
+            # Decodificar y preprocesar
+            imagen_bytes = base64.b64decode(imagen_codificada)
+            imagen_array = np.frombuffer(imagen_bytes, dtype=np.uint8)
+            imagen = cv2.imdecode(imagen_array, cv2.IMREAD_COLOR)
+            
+            if imagen is None:
+                return jsonify({"error": "No se pudo decodificar la imagen"}), 400
                 
-            elif 'imagen' in datos:
-                # Busqueda por imagen nueva
-                imagen_codificada = datos['imagen']
-                
-                # Decodificar y preprocesar
-                imagen_bytes = base64.b64decode(imagen_codificada)
-                imagen_array = np.frombuffer(imagen_bytes, dtype=np.uint8)
-                imagen = cv2.imdecode(imagen_array, cv2.IMREAD_COLOR)
-                imagen_procesada = preprocesador.preprocesar_imagen(imagen)
-                
-                # Extraer características y buscar
-                resultados = sistema_busqueda.buscar_por_imagen(imagen_procesada, extractor)
-                
-            else:
-                return jsonify({"error": "Se requiere 'vector_caracteristicas' o 'imagen'"}), 400
+            imagen_procesada = preprocesador.preprocesar_imagen(imagen)
+            
+            # Extraer características y buscar
+            resultados = sistema_busqueda.buscar_por_imagen(imagen_procesada, extractor)
             
             return jsonify({
                 "exito": True,

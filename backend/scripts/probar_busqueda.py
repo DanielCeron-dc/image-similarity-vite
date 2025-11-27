@@ -15,8 +15,6 @@ import numpy as np
 # Agregar directorio raiz al path para importaciones
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from src.utilidades.limpiar_vectores import limpiar_vector
-
 
 def verificar_precision_exacta(resultados, imagen_consulta):
     
@@ -53,8 +51,8 @@ def probar_busqueda():
     Flujo:
     1. Verifica que el servidor esta activo
     2. Verifica que el sistema esta indexado
-    3. Carga caracteristicas de la primera imagen
-    4. Realiza busqueda por vector
+    3. Busca una imagen que SI esta en el dataset
+    4. Realiza busqueda por imagen
     5. Muestra resultados y verifica precision
     """
     print("PROBANDO SISTEMA SCBIR")
@@ -75,32 +73,37 @@ def probar_busqueda():
         print("  python app.py")
         return
     
-    # 2: Cargar caracteristicas pre-extraidas
-    try:
-        with open('datos/caracteristicas/caracteristicas_completas.json', 'r') as f:
-            caracteristicas = json.load(f)
-    except Exception as e:
-        print(f"Error cargando caracteristicas: {e}")
-        print("Ejecuta: python scripts/descargar_datos.py")
+    # 2: Seleccionar una imagen que SÍ está en el dataset indexado
+    directorio_procesadas = 'datos/procesadas'
+    if not os.path.exists(directorio_procesadas):
+        print(f"Error: No existe directorio {directorio_procesadas}")
         return
     
-    # 3: Probar busqueda por vector (consulta a si misma)
-    print("\nPRUEBA 1: Busqueda por vector (consulta a si misma)")
+    archivos_imagen = [f for f in os.listdir(directorio_procesadas) if f.endswith('.png')]
+    if not archivos_imagen:
+        print("Error: No hay imagenes en datos/procesadas")
+        return
     
-    # Usar el vector de la primera imagen como consulta
-    imagen_consulta = caracteristicas[0]['archivo']
-    vector_prueba = caracteristicas[0]['vector_completo']
+    # Usar la primera imagen del dataset como consulta
+    imagen_consulta = archivos_imagen[0]
+    ruta_imagen = os.path.join(directorio_procesadas, imagen_consulta)
     
-    # Limpiar vector
-    vector_limpio = limpiar_vector(vector_prueba)
-
+    print(f"\nPRUEBA 1: Busqueda por imagen (consulta a si misma)")
     print(f"Imagen consulta: {imagen_consulta}")
-    print(f"Dimension del vector: {len(vector_limpio)}")
     
-    # 4: Realizar busqueda via API
+    # 3: Leer imagen y convertir a base64
+    try:
+        with open(ruta_imagen, 'rb') as f:
+            imagen_bytes = f.read()
+            imagen_base64 = base64.b64encode(imagen_bytes).decode('utf-8')
+    except Exception as e:
+        print(f"Error leyendo imagen {ruta_imagen}: {e}")
+        return
+    
+    # 4: Realizar busqueda por IMAGEN
     response = requests.post(
         "http://localhost:5000/api/buscar-similares",
-        json={"vector_caracteristicas": vector_limpio}
+        json={"imagen": imagen_base64}
     )
     
     # 5: Procesar y mostrar resultados
@@ -111,11 +114,9 @@ def probar_busqueda():
         # Mostrar top 10 
         print("\nTOP 10 RESULTADOS (ordenados por similitud):")
         for i, resultado in enumerate(resultados['resultados'][:10]):
-            # Marcar cual es la consulta original
-            marca_consulta = " [CONSULTA]" if resultado.get('es_consulta', False) else ""
             print(f"   {i+1:2d}. {resultado['archivo']} - "
                   f"Similitud: {resultado['similitud']:.3f} - "
-                  f"Distancia: {resultado['distancia']:.2f}{marca_consulta}")
+                  f"Distancia: {resultado['distancia']:.2f}")
         
         # Verificacion de precision
         verificar_precision_exacta(resultados['resultados'], imagen_consulta)
@@ -125,42 +126,58 @@ def probar_busqueda():
 
 
 def probar_busqueda_aleatoria():
-    print("PRUEBA 2: Busqueda con imagen aleatoria")
-    # 1: Cargar caracteristicas
-    try:
-        with open('datos/caracteristicas/caracteristicas_completas.json', 'r') as f:
-            caracteristicas = json.load(f)
-    except Exception as e:
-        print(f"Error cargando caracteristicas: {e}")
+    print("\nPRUEBA 2: Busqueda con imagen aleatoria")
+    
+    # 1: Seleccionar imagen aleatoria del directorio de procesadas
+    directorio_procesadas = 'datos/procesadas'
+    if not os.path.exists(directorio_procesadas):
+        print(f"Error: No existe directorio {directorio_procesadas}")
         return
     
-    # 2: Seleccionar imagen aleatoria como consulta
-    indice_aleatorio = random.randint(0, len(caracteristicas) - 1)
-    imagen_consulta = caracteristicas[indice_aleatorio]['archivo']
-    vector_consulta = caracteristicas[indice_aleatorio]['vector_completo']
-    vector_limpio = limpiar_vector(vector_consulta)
+    archivos_imagen = [f for f in os.listdir(directorio_procesadas) if f.endswith('.png')]
+    if not archivos_imagen:
+        print("Error: No hay imagenes en datos/procesadas")
+        return
+    
+    # 2: Seleccionar imagen aleatoria
+    imagen_consulta = random.choice(archivos_imagen)
+    ruta_imagen = os.path.join(directorio_procesadas, imagen_consulta)
     
     print(f"Imagen de consulta aleatoria: {imagen_consulta}")
     
-    # 3: Realizar busqueda
+    # 3: Leer imagen y convertir a base64
+    try:
+        with open(ruta_imagen, 'rb') as f:
+            imagen_bytes = f.read()
+            imagen_base64 = base64.b64encode(imagen_bytes).decode('utf-8')
+    except Exception as e:
+        print(f"Error leyendo imagen {ruta_imagen}: {e}")
+        return
+    
+    # 4: Realizar busqueda por IMAGEN
     response = requests.post(
         "http://localhost:5000/api/buscar-similares",
-        json={"vector_caracteristicas": vector_limpio}
+        json={"imagen": imagen_base64}
     )
     
-    # 4: Mostrar resultados
+    # 5: Mostrar resultados
     if response.status_code == 200:
         resultados = response.json()
         print(f"Resultados obtenidos: {len(resultados.get('resultados', []))}")
         
         print("\nTOP 5 RESULTADOS ALEATORIOS:")
         for i, resultado in enumerate(resultados['resultados'][:5]):
-            marca_consulta = " [CONSULTA]" if resultado.get('es_consulta', False) else ""
             print(f"   {i+1}. {resultado['archivo']} - "
-                  f"Similitud: {resultado['similitud']:.3f}{marca_consulta}")
+                  f"Similitud: {resultado['similitud']:.3f} - "
+                  f"Distancia: {resultado['distancia']:.2f}")
         
-        # Verificacion de precision
-        verificar_precision_exacta(resultados['resultados'], imagen_consulta)
+        # Verificar si la consulta aparece en los resultados
+        consulta_encontrada = any(r['archivo'] == imagen_consulta for r in resultados['resultados'])
+        if consulta_encontrada:
+            print("   CONSULTA ENCONTRADA EN RESULTADOS")
+        else:
+            print("   CONSULTA NO ENCONTRADA (normal para imagen nueva)")
+            
     else:
         print(f"Error en busqueda: {response.json()}")
 

@@ -69,76 +69,42 @@ class SistemaBusqueda:
             print(f"Error cargando indices: {e}")
             return False
     
-    def encontrar_indice_exacto(self, vector_consulta):
+    def buscar_por_imagen(self, imagen, extractor, top_k=10):
         """
-        Flujo:
-        1. Busca vector identico con tolerancia 1e-10
-        2. Si no encuentra, usa el mas cercano (fallback)
-        """
-        vector_consulta_array = np.array(vector_consulta)
-        
-        # 1: Buscar el vector identico con tolerancia muy pequeña
-        for idx, vector_original in enumerate(self.vectores_originales):
-            if np.allclose(vector_original, vector_consulta_array, atol=1e-10):
-                return idx
-        
-        # 2: Fallback 
-        distancias = np.linalg.norm(self.vectores_originales - vector_consulta_array, axis=1)
-        indice_mas_cercano = np.argmin(distancias)
-        distancia_minima = distancias[indice_mas_cercano]
-        
-        print(f"No se encontro vector identico. Usando el mas cercano (distancia: {distancia_minima:.10f})")
-        return indice_mas_cercano
-    
-    def buscar_por_vector(self, vector_consulta, top_k=10):
-        """
-        Flujo:
-        1. Encontrar indice exacto del vector de consulta
-        2. Usar vector original normalizado para busqueda FAISS
-        3. Ejecutar busqueda k-NN
-        4. Convertir distancias a similitudes
-        5. Forzar valores exactos para consulta a si misma
-        6. Ordenar por similitud descendente
+        Flujo CORREGIDO:
+        1. Extrae caracteristicas de la imagen
+        2. Normaliza el vector igual que durante el entrenamiento
+        3. Busca DIRECTAMENTE en FAISS sin buscar vector "exacto"
         """
         if not self.cargado:
             return {"error": "Sistema no esta cargado. Ejecuta indexacion primero."}
         
         try:
-            # 1: Encontrar el indice exacto del vector de consulta
-            indice_consulta = self.encontrar_indice_exacto(vector_consulta)
-            nombre_archivo_consulta = self.mapeo_indices.get(str(indice_consulta), f"imagen_{indice_consulta}")
+            # 1: Extraer caracteristicas de la imagen
+            resultado = extractor.extraer_imagen(imagen)
+            vector_caracteristicas = resultado['vector_completo']
             
-            print(f"Consulta: {nombre_archivo_consulta} (indice {indice_consulta})")
+            print(f"BUSQUEDA POR IMAGEN - Vector length: {len(vector_caracteristicas)}")
             
-            # 2: Usar el vector original normalizado para busqueda FAISS
-            vector_exacto = self.vectores_originales[indice_consulta]
-            vector_normalizado = (vector_exacto - self.scaler['min']) / self.scaler['range']
+            # 2: Normalizar el vector igual que durante el entrenamiento
+            vector_normalizado = (vector_caracteristicas - self.scaler['min']) / self.scaler['range']
             vector_normalizado = np.clip(vector_normalizado, 0.0, 1.0)
             
-            # 3: Busqueda FAISS con vector exacto
+            # 3: Busqueda DIRECTA en FAISS
             vector_float32 = vector_normalizado.astype('float32').reshape(1, -1)
             
             # search retorna (distancias, indices) de los k vecinos mas cercanos
             distancias, indices = self.indice_faiss.search(vector_float32, top_k)
             
-            # 4: Formatear resultados con GARANTIA de precision
+            # 4: Formatear resultados
             resultados = []
             for i, (dist, idx) in enumerate(zip(distancias[0], indices[0])):
                 
                 if idx != -1:
                     nombre_archivo = self.mapeo_indices.get(str(idx), f"imagen_{idx}")
                     
-                    # PROBLEMA, SOS: Si es la misma imagen, forzar valores exactos
-                    if idx == indice_consulta:
-                        similitud = 1.0
-                        dist = 0.0
-                        es_consulta = True
-                    else:
-                        # Convertir distancia a similitud con funcion exponencial
-                        # Factor 20.0: controla la "sensibilidad" de la similitud
-                        # Menor factor -> decaimiento mas rapido
-                        similitud = np.exp(-dist / 20.0)
-                        es_consulta = False
+                    # Convertir distancia a similitud
+                    similitud = np.exp(-dist / 20.0)
                     
                     resultados.append({
                         "posicion": i + 1,
@@ -146,33 +112,17 @@ class SistemaBusqueda:
                         "similitud": float(similitud),
                         "distancia": float(dist),
                         "indice_faiss": int(idx),
-                        "es_consulta": es_consulta
+                        "es_consulta": False  # Porque es una imagen nueva
                     })
             
-            # 5: Ordenar por similitud descendente
+            # Ordenar por similitud descendente
             resultados.sort(key=lambda x: x["similitud"], reverse=True)
-            if resultados and resultados[0]['es_consulta']:
-                print(f"VERIFICACION: Consulta en posicion 1 con similitud {resultados[0]['similitud']:.6f}")
-            else:
-                print("ERROR: La consulta no esta en posicion 1")
             
+            print(f"BUSQUEDA COMPLETADA - {len(resultados)} resultados")
             return resultados
             
         except Exception as e:
-            return {"error": f"Error en busqueda: {str(e)}"}
-    
-    def buscar_por_imagen(self, imagen, extractor, top_k=10):
-        """
-        Flujo:
-        1. Extrae caracteristicas de la imagen
-        2. Llama a buscar_por_vector con el vector extraido
-        """
-        # Extraer caracteristicas de la imagen
-        resultado = extractor.extraer_imagen(imagen)
-        vector_caracteristicas = resultado['vector_completo']
-        
-        # Buscar por el vector extraido
-        return self.buscar_por_vector(vector_caracteristicas, top_k)
+            return {"error": f"Error en busqueda por imagen: {str(e)}"}
     
     def obtener_estadisticas(self):
         if not self.cargado:
