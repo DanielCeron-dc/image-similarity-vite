@@ -43,7 +43,6 @@ def main():
     print(f"Datasets descargados: {exitosos}")
     print(f"Imágenes preprocesadas: {total_procesadas}")
     print(f"Características extraídas: {len(resultados)}")
-    print(f"\nPaso siguiente: python scripts/indexar_sistema.py")
 
 if __name__ == "__main__":
     main()
