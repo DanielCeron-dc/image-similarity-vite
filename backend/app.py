@@ -7,7 +7,8 @@ import os
 
 # Crear aplicación Flask
 app = Flask(__name__)
-CORS(app)
+# Permitir CORS para todos los orígenes (necesario para el front)
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 # Configurar rutas
 from src.rutas.salud import configurar_rutas_salud

@@ -6,6 +6,8 @@ import sys
 import requests
 import json
 
+API_BASE_URL = os.getenv("API_BASE_URL") or os.getenv("BACKEND_URL") or "http://localhost:5001"
+
 # Agregar el directorio src al path para importaciones
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -16,10 +18,7 @@ def indexar_sistema():
     print("Indexando sistema SCBIR...")
     
     try:
-        response = requests.post(
-            "http://localhost:5000/api/indexar-sistema",
-            json={}
-        )
+        response = requests.post(f"{API_BASE_URL}/api/indexar-sistema", json={})
         
         if response.status_code == 200:
             resultado = response.json()

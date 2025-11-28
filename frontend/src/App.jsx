@@ -66,10 +66,20 @@ function App() {
       console.log("Buscando huellas similares para:", f.name);
       const similarResults = await searchSimilarFingerprints(f);
       console.log("Resultados recibidos:", similarResults);
-      setResults(similarResults);
 
       if (similarResults.length === 0) {
+        setResults([]);
         setError("No se encontraron resultados similares.");
+      } else {
+        const maxSim = Math.max(
+          ...similarResults.map((r) => Number(r.similitud) || 0)
+        );
+        if (maxSim <= 0.01) {
+          setResults([]);
+          setError("Proporciona una imagen de huella válida.");
+        } else {
+          setResults(similarResults);
+        }
       }
     } catch (e) {
       console.error("Error en busqueda:", e);
@@ -91,10 +101,10 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br via-gray-600 to-bg-black flex flex-col relative overflow-auto">
+    <div className="min-h-screen bg-gradient-to-l from-[#000066] via-[#000040] to-black flex flex-col relative overflow-auto">
       {/* Animated gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500/20 via-transparent to-yellow-500/20 animate-pulse"></div>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-pink-500/30 via-transparent to-transparent"></div>
+      <div className="absolute inset-0 bg-gradient-to-l from-[#0022aa]/25 via-transparent to-[#000066]/20 animate-pulse"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-[#000066]/18 via-transparent to-transparent"></div>
 
       <div className="relative z-10 flex flex-col h-full">
         <Header />

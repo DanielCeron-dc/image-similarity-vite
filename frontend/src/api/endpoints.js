@@ -1,4 +1,5 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+// Default to backend port 5001 unless explicitly overridden
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5001";
 
 export const ENDPOINTS = {
   // Salud del sistema
