@@ -139,10 +139,7 @@ export function ImageModal({
                   <strong>Distancia:</strong>
                   <span>{currentResult.distancia?.toFixed(4) || "N/A"}</span>
                 </div>
-                <div className="info-item">
-                  <strong>Posición:</strong>
-                  <span>{currentResultIndex + 1}</span>
-                </div>
+      
               </div>
             </div>
           </div>

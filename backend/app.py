@@ -5,6 +5,9 @@ from flask import Flask
 from flask_cors import CORS
 import os
 
+# Default sensible port for local use (matches frontend .env)
+os.environ.setdefault("FLASK_RUN_PORT", "5001")
+
 # Crear aplicación Flask
 app = Flask(__name__)
 # Permitir CORS para todos los orígenes (necesario para el front)
@@ -37,9 +40,24 @@ def crear_directorios():
     for directorio in directorios:
         os.makedirs(directorio, exist_ok=True)
 
+
+def obtener_puerto():
+    """Obtiene el puerto del entorno con un valor por defecto consistente."""
+    return int(
+        os.getenv("PORT")
+        or os.getenv("BACKEND_PORT")
+        or os.getenv("FLASK_RUN_PORT")
+        or "5001"
+    )
+
+
+# Garantiza que los directorios existan incluso al usar `flask run`
+crear_directorios()
+
 if __name__ == '__main__':
     crear_directorios()
+    port = obtener_puerto()
     print("Iniciando Sistema SCBIR para Huellas...")
     print("Directorios creados: datos/datasets, datos/procesadas, datos/caracteristicas, datos/indices")
-    print("Servidor disponible en: http://localhost:5000")
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    print(f"Servidor disponible en: http://localhost:{port}")
+    app.run(debug=True, host='0.0.0.0', port=port)
