@@ -64,7 +64,7 @@ export function ImageModal({
     <div className="image-modal-overlay" onClick={onClose}>
       <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="image-modal-header">
-          <h2>Comparación de Huellas - Resultado #{currentResultIndex + 1}</h2>
+          <h2>Comparación de Huellas</h2>
           <button className="close-button" onClick={onClose}>
             ×
           </button>
@@ -133,13 +133,12 @@ export function ImageModal({
                 </div>
                 <div className="info-item">
                   <strong>Similitud:</strong>
-                  <span>{Math.round(currentResult.similitud * 100)}%</span>
+                  <span>{(currentResult.similitud * 100).toFixed(4)}%</span>
                 </div>
                 <div className="info-item">
                   <strong>Distancia:</strong>
                   <span>{currentResult.distancia?.toFixed(4) || "N/A"}</span>
                 </div>
-      
               </div>
             </div>
           </div>

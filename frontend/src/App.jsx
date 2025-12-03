@@ -74,7 +74,7 @@ function App() {
         const maxSim = Math.max(
           ...similarResults.map((r) => Number(r.similitud) || 0)
         );
-        if (maxSim <= 0.01) {
+        if (maxSim <= 0.0001) {
           setResults([]);
           setError("Proporciona una imagen de huella válida.");
         } else {

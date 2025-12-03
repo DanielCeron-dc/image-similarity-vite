@@ -33,7 +33,7 @@ export function ImageGrid({ results = [], loading = false, onImageSelect }) {
 
                 <div className="absolute bottom-3 left-3 right-3">
                   <div className="px-3 py-1.5 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-semibold border border-white/30 text-center">
-                    {Math.round(result.similitud * 100)}%
+                    {(result.similitud * 100).toFixed(4)}%
                   </div>
                 </div>
               </div>
@@ -58,9 +58,6 @@ export function ImageGrid({ results = [], loading = false, onImageSelect }) {
                       <span className="text-3xl font-black text-white/30">
                         {i + 1}
                       </span>
-                    </div>
-                    <div className="text-sm text-white/50 font-bold">
-                      Empty Slot
                     </div>
                   </div>
                 )}
